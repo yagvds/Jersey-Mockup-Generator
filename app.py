@@ -1,7 +1,8 @@
 import random
-from datetime import datetime
+import json
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 APP_TITLE = "Sports Jersey Prompt Generator"
@@ -758,10 +759,8 @@ def apply_custom_style():
         """
         <style>
         .stApp {
-            background:
-                radial-gradient(circle at top left, rgba(40, 167, 105, 0.10), transparent 30%),
-                linear-gradient(180deg, #f7fbf7 0%, #eef4f8 48%, #f8fafc 100%);
-            color: #18212f;
+            background: #090d14;
+            color: #e5e7eb;
         }
 
         .block-container {
@@ -771,11 +770,12 @@ def apply_custom_style():
         }
 
         .app-hero {
-            background: linear-gradient(135deg, #10231c 0%, #1f6f4a 48%, #f0b429 100%);
+            background: #111827;
+            border: 1px solid #243244;
             border-radius: 8px;
             padding: 30px 34px;
-            color: #ffffff;
-            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+            color: #f9fafb;
+            box-shadow: none;
             margin-bottom: 18px;
         }
 
@@ -784,6 +784,7 @@ def apply_custom_style():
             line-height: 1.05;
             margin: 0 0 10px 0;
             letter-spacing: 0;
+            color: #f9fafb;
         }
 
         .app-hero p {
@@ -791,78 +792,140 @@ def apply_custom_style():
             font-size: 1.02rem;
             line-height: 1.6;
             margin: 0;
-            color: rgba(255, 255, 255, 0.92);
+            color: #cbd5e1;
         }
 
         .step-card {
             min-height: 108px;
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: #111827;
+            border: 1px solid #243244;
             border-radius: 8px;
             padding: 16px 18px;
-            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+            box-shadow: none;
         }
 
         .step-card strong {
-            color: #14532d;
+            color: #f9fafb;
             display: block;
             font-size: 0.95rem;
             margin-bottom: 6px;
         }
 
         .step-card span {
-            color: #475569;
+            color: #94a3b8;
             line-height: 1.45;
             font-size: 0.92rem;
         }
 
         .section-title {
-            color: #10231c;
+            color: #f9fafb;
             font-size: 1.2rem;
             font-weight: 700;
             margin: 14px 0 4px 0;
         }
 
         .soft-note {
-            background: #fff7db;
-            border-left: 5px solid #f0b429;
+            background: #101820;
+            border-left: 4px solid #22c55e;
             border-radius: 8px;
             padding: 13px 15px;
-            color: #4a3412;
+            color: #d1d5db;
             margin: 10px 0 18px 0;
         }
 
         .mini-note {
-            background: #eef9f2;
-            border: 1px solid rgba(34, 197, 94, 0.22);
+            background: #0f172a;
+            border: 1px solid #233044;
             border-radius: 8px;
             padding: 10px 12px;
-            color: #14532d;
+            color: #cbd5e1;
             margin-bottom: 12px;
             font-size: 0.93rem;
         }
 
         div[data-testid="stVerticalBlockBorderWrapper"] {
-            border-color: rgba(15, 23, 42, 0.09);
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-            background: rgba(255, 255, 255, 0.72);
+            border-color: #243244;
+            box-shadow: none;
+            background: #0f172a;
         }
 
-        .stButton > button,
-        .stDownloadButton > button {
+        .stButton > button {
+            background: #1f2937;
+            border: 1px solid #334155;
+            color: #f9fafb;
             border-radius: 8px;
             min-height: 42px;
             font-weight: 700;
         }
 
+        .stButton > button:hover {
+            background: #263244;
+            border-color: #64748b;
+            color: #ffffff;
+        }
+
+        .stButton > button[kind="primary"] {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: #07110b;
+        }
+
+        .stButton > button[kind="primary"]:hover {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: #061008;
+        }
+
+        .stCaption, [data-testid="stCaptionContainer"] {
+            color: #94a3b8;
+        }
+
+        label, p, span, li {
+            color: #d1d5db;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #f9fafb;
+        }
+
         .stTextArea textarea {
+            background: #050812;
+            border: 1px solid #334155;
             border-radius: 8px;
+            color: #e5e7eb;
             font-size: 0.95rem;
             line-height: 1.55;
         }
 
+        .stTextArea textarea:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 1px #22c55e;
+        }
+
         div[data-baseweb="select"] > div {
+            background: #050812;
+            border-color: #334155;
             border-radius: 8px;
+            color: #e5e7eb;
+        }
+
+        div[data-baseweb="select"] span {
+            color: #e5e7eb;
+        }
+
+        div[data-baseweb="tab-list"] button {
+            color: #cbd5e1;
+        }
+
+        section[data-testid="stSidebar"] {
+            background: #050812;
+            border-right: 1px solid #1f2937;
+        }
+
+        div[data-testid="stAlert"] {
+            background: #111827;
+            color: #d1d5db;
+            border: 1px solid #243244;
         }
 
         @media (max-width: 720px) {
@@ -911,6 +974,75 @@ def render_step_cards():
             """,
             unsafe_allow_html=True,
         )
+
+
+def render_copy_prompt_button(prompt_text):
+    prompt_json = json.dumps(prompt_text)
+    components.html(
+        f"""
+        <button id="copyPromptButton" type="button">Copy Hasil Prompt</button>
+        <div id="copyPromptStatus" aria-live="polite"></div>
+
+        <script>
+        const promptText = {prompt_json};
+        const button = document.getElementById("copyPromptButton");
+        const statusText = document.getElementById("copyPromptStatus");
+
+        async function copyPrompt() {{
+            try {{
+                await navigator.clipboard.writeText(promptText);
+                statusText.textContent = "Prompt berhasil dicopy.";
+            }} catch (error) {{
+                const helper = document.createElement("textarea");
+                helper.value = promptText;
+                helper.style.position = "fixed";
+                helper.style.left = "-9999px";
+                document.body.appendChild(helper);
+                helper.focus();
+                helper.select();
+                document.execCommand("copy");
+                document.body.removeChild(helper);
+                statusText.textContent = "Prompt berhasil dicopy.";
+            }}
+        }}
+
+        button.addEventListener("click", copyPrompt);
+        </script>
+
+        <style>
+        body {{
+            margin: 0;
+            background: transparent;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }}
+
+        #copyPromptButton {{
+            width: 100%;
+            min-height: 44px;
+            border: 1px solid #22c55e;
+            border-radius: 8px;
+            background: #22c55e;
+            color: #061008;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+        }}
+
+        #copyPromptButton:hover {{
+            background: #16a34a;
+            border-color: #16a34a;
+        }}
+
+        #copyPromptStatus {{
+            min-height: 22px;
+            padding-top: 8px;
+            color: #86efac;
+            font-size: 13px;
+        }}
+        </style>
+        """,
+        height=82,
+    )
 
 
 def render_select(label, key, help_text=None):
@@ -1015,7 +1147,6 @@ with config_column:
             )
 
 prompt_text = st.session_state.generated_prompt
-file_name = f"sports_jersey_prompt_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
 with result_column:
     with st.container(border=True):
@@ -1033,14 +1164,7 @@ with result_column:
             help="Blok teks ini lalu salin jika ingin copy manual.",
         )
 
-        st.download_button(
-            "Download Prompt TXT",
-            data=prompt_text,
-            file_name=file_name,
-            mime="text/plain",
-            use_container_width=True,
-            help="Mengunduh prompt sebagai file TXT.",
-        )
+        render_copy_prompt_button(prompt_text)
 
         with st.expander("Lihat negative prompt otomatis"):
             st.write(NEGATIVE_PROMPT)
