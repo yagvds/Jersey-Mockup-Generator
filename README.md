@@ -2,7 +2,7 @@
 
 Aplikasi Python sederhana berbasis Streamlit untuk membuat prompt mockup dan photoshoot jersey olahraga yang realistis, natural, dan profesional.
 
-Aplikasi ini tidak membuat gambar langsung. Hasil prompt bisa Anda copy atau download sebagai file TXT, lalu digunakan di ChatGPT atau image generator bersama gambar desain jersey yang Anda upload.
+Aplikasi ini tidak membuat gambar langsung. Hasil prompt bisa Anda copy, lalu digunakan di ChatGPT atau image generator bersama gambar desain jersey yang Anda upload.
 
 Dropdown aplikasi dibuat dalam bahasa Indonesia agar mudah dipahami. Prompt akhir tetap otomatis disusun dalam bahasa Inggris karena biasanya lebih cocok untuk image generator.
 
@@ -21,11 +21,14 @@ sports_jersey_prompt_generator/
 - Pilihan jenis olahraga, seperti sepak bola, futsal, running, badminton, padel, basket, voli, tenis, gym, dan lainnya.
 - Pilihan jenis hasil foto: jersey dipakai atlet, detail produk jersey, jersey digantung, jersey di kursi stadion, locker room, close-up logo, tampak belakang nama nomor, flat lay, dan katalog produk.
 - Tema detail produk untuk kebutuhan presentasi klien, preview sebelum produksi, katalog, dan konten promosi.
+- Upload 1 sampai 3 gambar referensi untuk arahan pose, background, lighting, komposisi, atau style mockup.
+- Pilihan **Kosong / ikuti referensi** di dropdown agar kategori tertentu bisa mengikuti gambar referensi.
+- Prompt detail untuk hasil realistis natural seperti photoshoot asli, termasuk fabric pattern, motif, logo, sponsor, collar, sleeve, stitching, nama, dan nomor.
 - Data preset lebih banyak agar hasil random tidak monoton.
 - Minimal 30+ model, 50+ pose, 30+ background, 20+ lighting, 20+ camera angle, 20+ mood, 20+ outfit, dan 15+ komposisi.
 - Tombol Generate Prompt.
 - Tombol Generate Random Prompt.
-- Tombol Copy/Download Prompt TXT.
+- Tombol Copy Hasil Prompt.
 - Negative prompt otomatis.
 - Instruksi khusus agar desain jersey dari gambar referensi tidak berubah.
 
@@ -119,12 +122,14 @@ Buka alamat tersebut di browser.
 ## 7. Cara Menggunakan Aplikasi
 
 1. Pilih preset photoshoot yang Anda inginkan.
-2. Isi catatan tambahan jika perlu.
-3. Klik **Generate Prompt** untuk membuat prompt dari pilihan Anda.
-4. Klik **Generate Random Prompt** jika ingin kombinasi acak.
-5. Copy prompt dari kotak hasil, atau klik **Copy/Download Prompt TXT** untuk mengunduh file `.txt`.
-6. Upload gambar desain jersey Anda ke ChatGPT atau image generator.
-7. Tempel prompt yang sudah dibuat.
+2. Upload gambar referensi jika ada. Bisa upload 1 saja, atau maksimal 3.
+3. Jika ingin mengikuti referensi, pilih **Kosong / ikuti referensi** pada kategori yang diinginkan.
+4. Isi catatan tambahan jika perlu.
+5. Klik **Generate Prompt** untuk membuat prompt dari pilihan Anda.
+6. Klik **Generate Random Prompt** jika ingin kombinasi acak.
+7. Klik **Copy Hasil Prompt**, lalu paste prompt ke ChatGPT atau image generator.
+8. Upload gambar desain jersey Anda ke ChatGPT atau image generator.
+9. Jika memakai referensi, upload juga gambar referensi yang sama ke image generator.
 
 ## 8. Mematikan Aplikasi
 

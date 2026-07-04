@@ -7,6 +7,11 @@ import streamlit.components.v1 as components
 
 APP_TITLE = "Sports Jersey Prompt Generator"
 APP_SUBTITLE = "Prompt photoshoot jersey olahraga yang realistis, natural, dan profesional."
+REFERENCE_OPTION_LABEL = "Kosong / ikuti referensi"
+REFERENCE_OPTION_PROMPT = (
+    "follow the uploaded reference image if provided; otherwise use a clean, natural, realistic sportswear photoshoot default"
+)
+REFERENCE_UPLOAD_KEYS = ["reference_image_1", "reference_image_2", "reference_image_3"]
 
 JERSEY_REFERENCE_TEXT = (
     "Use the uploaded jersey design as the main reference. "
@@ -21,7 +26,7 @@ JERSEY_LOCK_TEXT = (
 )
 
 NEGATIVE_PROMPT = (
-    "Negative prompt: cartoon, anime, illustration, CGI, 3D render, plastic skin, "
+    "Negative prompt: cartoon, anime, illustration, fake CGI, cartoonish 3D render, plastic skin, "
     "overly glossy jersey, unrealistic fabric, distorted body, extra fingers, missing fingers, "
     "deformed hands, bad anatomy, duplicated person, blurry face, low resolution, pixelated, "
     "warped logo, changed jersey design, wrong colors, wrong pattern, moved sponsor logo, "
@@ -564,11 +569,17 @@ QUICK_PRESETS = {
 }
 
 
-def labels_for(key):
+def base_labels_for(key):
     return [item["label"] for item in PRESETS[key]]
 
 
+def labels_for(key):
+    return [REFERENCE_OPTION_LABEL] + base_labels_for(key)
+
+
 def prompt_for(key, label):
+    if label == REFERENCE_OPTION_LABEL:
+        return REFERENCE_OPTION_PROMPT
     for item in PRESETS[key]:
         if item["label"] == label:
             return item["prompt"]
@@ -585,7 +596,7 @@ def valid_value(key, value):
 
 
 def pick_random_values():
-    values = {key: random.choice(labels_for(key)) for key in PRESETS}
+    values = {key: random.choice(base_labels_for(key)) for key in PRESETS}
 
     product_display_labels = {
         "Detail produk jersey saja",
@@ -630,11 +641,11 @@ def pick_random_values():
         "Hero shot brand campaign",
     ]
     athlete_model_labels = [
-        label for label in labels_for("jenis_model")
+        label for label in base_labels_for("jenis_model")
         if label not in {"Tanpa model, fokus produk", "Tangan memegang jersey saja"}
     ]
     athlete_pose_labels = [
-        label for label in labels_for("pose")
+        label for label in base_labels_for("pose")
         if label not in product_poses
     ]
 
@@ -655,7 +666,25 @@ def pick_random_values():
     return values
 
 
-def build_prompt(values, custom_note):
+def reference_upload_count():
+    return sum(1 for key in REFERENCE_UPLOAD_KEYS if st.session_state.get(key) is not None)
+
+
+def reference_instruction(reference_count):
+    if reference_count:
+        return (
+            f"Additional visual reference instruction: {reference_count} reference image(s) are provided. "
+            "Use them as visual direction for pose, composition, background, lighting, camera angle, mood, product placement, and realistic mockup style when any dropdown is set to follow reference. "
+            "Do not copy unrelated logos, unrelated jersey artwork, watermark, face identity, or text from reference images unless they belong to the uploaded jersey design reference."
+        )
+
+    return (
+        "Additional visual reference instruction: If reference images are uploaded later, use them as visual direction for pose, composition, background, lighting, camera angle, mood, product placement, and realistic mockup style. "
+        "If a dropdown says follow reference but no reference image is provided, use a clean, natural, realistic sportswear photoshoot default."
+    )
+
+
+def build_prompt(values, custom_note, reference_count=0):
     note = custom_note.strip()
     note_line = f"\nAdditional direction: {note}" if note else ""
 
@@ -692,9 +721,14 @@ Outfit styling: {outfit}.
 Mood: {mood}.
 Final image format: {output}.{note_line}
 
+{reference_instruction(reference_count)}
+
 Jersey reference instruction:
 {JERSEY_REFERENCE_TEXT}
 {JERSEY_LOCK_TEXT}
+
+Realism and material detail:
+Create a photorealistic 3D-realistic result that still feels like a natural real photoshoot, not a cartoon or fake render. Make the fabric texture, weave, mesh, sublimation print, pattern, motif, collar construction, sleeve trim, side panels, stitching, seams, folds, wrinkles, shadows, fabric thickness, logo embroidery/print, sponsor print, names, numbers, and all graphic elements look detailed, sharp, natural, and physically believable.
 
 Make the uploaded jersey design look like real performance sportswear fabric. The result can show the jersey worn by an athlete, displayed on a bench, hanging in a locker room, laid flat, held by hands, or shown as a close-up product detail, based on the selected photo/mockup type. The jersey can be for football, futsal, running, badminton, padel, basketball, volleyball, tennis, gym training, or other sports, based on the selected sport category. Preserve the exact uploaded jersey design while making the result natural, realistic, sharp, professional, and ready for a sports club, product catalog, client presentation, team launch, or sportswear campaign.
 
@@ -710,6 +744,7 @@ def set_random_prompt():
     st.session_state.generated_prompt = build_prompt(
         random_values,
         st.session_state.get("custom_note", ""),
+        reference_upload_count(),
     )
 
 
@@ -722,6 +757,7 @@ def set_quick_preset(preset_name):
     st.session_state.generated_prompt = build_prompt(
         preset_values,
         st.session_state.get("custom_note", ""),
+        reference_upload_count(),
     )
 
 
@@ -732,6 +768,7 @@ def generate_from_current_selection():
     st.session_state.generated_prompt = build_prompt(
         st.session_state.selected_values,
         st.session_state.get("custom_note", ""),
+        reference_upload_count(),
     )
 
 
@@ -751,6 +788,7 @@ def initialize_state():
         st.session_state.generated_prompt = build_prompt(
             st.session_state.selected_values,
             "",
+            reference_upload_count(),
         )
 
 
@@ -913,6 +951,40 @@ def apply_custom_style():
             color: #e5e7eb;
         }
 
+        div[data-baseweb="popover"] {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        ul[role="listbox"],
+        li[role="option"] {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        li[role="option"]:hover {
+            background: #1f2937;
+            color: #ffffff;
+        }
+
+        div[data-testid="stFileUploader"] {
+            background: #050812;
+            border: 1px solid #243244;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        div[data-testid="stFileUploader"] * {
+            color: #d1d5db;
+        }
+
+        div[data-testid="stFileUploader"] button {
+            background: #1f2937;
+            border: 1px solid #334155;
+            color: #f9fafb;
+            border-radius: 8px;
+        }
+
         div[data-baseweb="tab-list"] button {
             color: #cbd5e1;
         }
@@ -1045,6 +1117,30 @@ def render_copy_prompt_button(prompt_text):
     )
 
 
+def render_reference_uploaders():
+    st.markdown('<div class="section-title">Referensi Foto / Gambar</div>', unsafe_allow_html=True)
+    st.caption("Opsional. Upload 1 sampai 3 gambar referensi untuk pose, layout, background, lighting, atau style mockup.")
+
+    upload_columns = st.columns(3)
+    uploaded_files = []
+    for index, column in enumerate(upload_columns, start=1):
+        with column:
+            uploaded_file = st.file_uploader(
+                f"Referensi {index}",
+                type=["png", "jpg", "jpeg", "webp"],
+                key=f"reference_image_{index}",
+                help="Gambar ini hanya menjadi panduan visual. Saat memakai image generator, upload juga gambar referensi yang sama di sana.",
+            )
+            if uploaded_file is not None:
+                uploaded_files.append(uploaded_file)
+                st.image(uploaded_file, caption=f"Referensi {index}", use_column_width=True)
+
+    if uploaded_files:
+        st.success(f"{len(uploaded_files)} referensi siap dipakai sebagai arahan visual.")
+    else:
+        st.info("Belum ada referensi. Anda tetap bisa generate prompt tanpa upload gambar.")
+
+
 def render_select(label, key, help_text=None):
     current_value = valid_value(key, st.session_state.selected_values[key])
     st.selectbox(
@@ -1103,6 +1199,7 @@ with config_column:
         render_select("Jenis olahraga", "olahraga", "Pilih cabang olahraga utama untuk jersey ini.")
         render_select("Jenis hasil foto", "tampilan_foto", "Pilih apakah jersey dipakai model atau ditampilkan sebagai detail produk.")
         render_select("Tema detail produk", "tema_produk", "Cocok untuk mockup jersey, katalog, presentasi klien, atau promosi.")
+        render_reference_uploaders()
 
         tab_subject, tab_scene, tab_style = st.tabs(["Model & Pose", "Lokasi & Foto", "Style & Output"])
 
@@ -1135,7 +1232,7 @@ with config_column:
         with action_column_1:
             st.button(
                 "Generate Prompt",
-                #type="primary",
+                type="primary",
                 use_container_width=True,
                 on_click=generate_from_current_selection,
             )
