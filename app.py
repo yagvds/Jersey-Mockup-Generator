@@ -1135,7 +1135,7 @@ with config_column:
         with action_column_1:
             st.button(
                 "Generate Prompt",
-                type="primary",
+                #type="primary",
                 use_container_width=True,
                 on_click=generate_from_current_selection,
             )
